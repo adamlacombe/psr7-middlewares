@@ -109,7 +109,7 @@ class JsonValidator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $value = $request->getParsedBody();
+        $value = json_decode(json_encode($request->getParsedBody()));
         if (!is_object($value)) {
             $request = self::setAttribute($request, self::KEY, [
                 sprintf('Parsed body must be an object. Type %s is invalid.', gettype($value)),

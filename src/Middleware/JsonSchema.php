@@ -18,9 +18,10 @@ class JsonSchema
      *
      * @param string[] $schemas [uri => file] An associative array of HTTP URI to validation schema
      */
-    public function __construct(array $schemas)
+    public function __construct(array $schemas, $errorHandler = NULL)
     {
         $this->schemas = $schemas;
+        $this->errorHandler = $errorHandler;
     }
 
     /**
@@ -56,11 +57,15 @@ class JsonSchema
     private function getSchema(ServerRequestInterface $request)
     {
         $uri = $request->getUri();
+        $method = $request->getMethod();
         $path = $uri->getPath();
 
-        foreach ($this->schemas as $pattern => $file) {
-            if (stripos($path, $pattern) === 0) {
-                return new \SplFileObject($this->normalizeFilePath($file));
+        if(!empty($this->schemas[$method]))
+        {
+            foreach ($this->schemas[$method] as $pattern => $file) {
+                if (stripos($path, $pattern) === 0) {
+                    return new \SplFileObject($this->normalizeFilePath($file));
+                }
             }
         }
 
