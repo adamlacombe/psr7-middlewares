@@ -59,12 +59,18 @@ class JsonSchema
         $uri = $request->getUri();
         $method = $request->getMethod();
         $path = $uri->getPath();
+        $request_path_count = count(explode('/', ltrim($path, '/')));
 
         if(!empty($this->schemas[$method]))
         {
             foreach ($this->schemas[$method] as $pattern => $file) {
-                if (stripos($path, $pattern) === 0) {
-                    return new \SplFileObject($this->normalizeFilePath($file));
+                $matches = array();
+                if(@preg_match($pattern, $uri, $matches)) //if request path matches schema array path
+                {
+                    if($request_path_count == count(explode('/', ltrim($matches['0'], '/'))))
+                    {
+                        return new \SplFileObject($this->normalizeFilePath($file));
+                    }
                 }
             }
         }

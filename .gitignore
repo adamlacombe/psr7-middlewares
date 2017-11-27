@@ -7,3 +7,5 @@ composer.phar
 .htaccess
 index.php
 /storage
+
+\.idea/
